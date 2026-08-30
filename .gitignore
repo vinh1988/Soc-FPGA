@@ -1,0 +1,9 @@
+# Build artifacts and compiled binaries
+*.raw
+*.png
+median_filter
+
+# Python cache
+__pycache__/
+*.pyc
+.venv/
