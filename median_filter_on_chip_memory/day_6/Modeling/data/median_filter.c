@@ -67,8 +67,8 @@ void median_filter_hardware_model(
 }
 
 int main(int argc, char *argv[]) {
-    const char *input_filename = "noisy_image.raw";
-    const char *output_filename = "denoised_image.raw";
+    const char *input_filename = "noisy_image.hex";
+    const char *output_filename = "denoised_image.hex";
 
     if (argc > 1) input_filename = argv[1];
     if (argc > 2) output_filename = argv[2];
@@ -82,8 +82,8 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // Read noisy input raw image data
-    FILE *fin = fopen(input_filename, "rb");
+    // Read noisy input hex image data
+    FILE *fin = fopen(input_filename, "r");
     if (!fin) {
         fprintf(stderr, "Error: Cannot open input file %s\n", input_filename);
         free(input_img);
@@ -91,10 +91,20 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    size_t bytes_read = fread(input_img, 1, HEIGHT * WIDTH, fin);
+    int read_count = 0;
+    for (int r = 0; r < HEIGHT; r++) {
+        for (int c = 0; c < WIDTH; c++) {
+            unsigned int pixel_val;
+            if (fscanf(fin, "%x", &pixel_val) == 1) {
+                input_img[r][c] = (unsigned char)pixel_val;
+                read_count++;
+            }
+        }
+    }
     fclose(fin);
-    if (bytes_read != HEIGHT * WIDTH) {
-        fprintf(stderr, "Error: Read incomplete raw data (%zu bytes).\n", bytes_read);
+
+    if (read_count != HEIGHT * WIDTH) {
+        fprintf(stderr, "Error: Read incomplete hex data (%d elements, expected %d).\n", read_count, HEIGHT * WIDTH);
         free(input_img);
         free(output_img);
         return 1;
@@ -105,8 +115,8 @@ int main(int argc, char *argv[]) {
     // Apply Median Filter hardware model
     median_filter_hardware_model(input_img, output_img);
 
-    // Write denoised raw image data
-    FILE *fout = fopen(output_filename, "wb");
+    // Write denoised hex image data
+    FILE *fout = fopen(output_filename, "w");
     if (!fout) {
         fprintf(stderr, "Error: Cannot open output file %s\n", output_filename);
         free(input_img);
@@ -114,7 +124,11 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    fwrite(output_img, 1, HEIGHT * WIDTH, fout);
+    for (int r = 0; r < HEIGHT; r++) {
+        for (int c = 0; c < WIDTH; c++) {
+            fprintf(fout, "%02X\n", output_img[r][c]);
+        }
+    }
     fclose(fout);
 
     printf("[C Hardware Model] Saved denoised image to %s\n", output_filename);

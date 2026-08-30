@@ -5,19 +5,19 @@ This repository contains a beginner-friendly simulation and hardware model for a
 ## Project Overview & Data Flow
 
 ```text
-Original Image -> Grayscale -> Add Noise -> Export Binary (.raw) -> C Median Filter -> Denoised Binary (.raw) -> Visualization
+Original Image -> Grayscale -> Add Noise -> Export Hex (.hex) -> C Median Filter -> Denoised Hex (.hex) -> Visualization
 ```
 
 1. **Python Preprocessing**: Converts an input image to 8-bit Grayscale ($128 \times 128$).
-2. **Noise Simulation**: Adds salt-and-pepper noise and exports raw byte array data.
-3. **C Hardware Model**: Processes raw pixel streams using a hardware-friendly $3 \times 3$ sliding window and 9-element Compare-and-Swap sorting network.
-4. **Visualization**: Reconstructs the denoised image and displays a side-by-side comparison.
+2. **Noise Simulation**: Adds salt-and-pepper noise and exports ASCII hex memory data (`.hex`).
+3. **C Hardware Model**: Processes hex pixel streams using a hardware-friendly $3 \times 3$ sliding window and 9-element Compare-and-Swap sorting network.
+4. **Visualization**: Reconstructs the denoised image from hex data and displays a side-by-side comparison.
 
 ---
 
 ## File Structure
 
-- `process_image.py`: Python script for image loading, grayscale conversion, adding salt-and-pepper noise, and raw file export/import functions.
+- `process_image.py`: Python script for image loading, grayscale conversion, adding salt-and-pepper noise, and hex file export/import functions.
 - `median_filter.c`: C code modeling FPGA/RTL line buffer sliding window and sorting network logic.
 - `run_pipeline.py`: Automated pipeline runner executing Python and C steps end-to-end.
 - `output_comparison.png`: Generated side-by-side image comparison result.
@@ -44,7 +44,7 @@ uv run python run_pipeline.py
 
 ### Option 2: Manual Execution
 
-1. **Generate noisy raw image data:**
+1. **Generate noisy hex image data:**
    ```bash
    python3 process_image.py
    ```
@@ -52,7 +52,7 @@ uv run python run_pipeline.py
 2. **Compile and run the C Hardware Model:**
    ```bash
    gcc -O2 median_filter.c -o median_filter
-   ./median_filter noisy_image.raw denoised_image.raw
+   ./median_filter noisy_image.hex denoised_image.hex
    ```
 
 3. **Reconstruct and view final denoised result:**
