@@ -130,7 +130,7 @@ module tb_Median_Filter_Core;
                     end
                 end
 
-                expected_median = {24'b0, expected_mem[r * WIDTH + c]};
+                expected_median = {24'h000000, expected_mem[r * WIDTH + c]};
 
                 // 1. Issue LOAD
                 write_reg(LOAD_ADDR, 32'h0000_0001);
