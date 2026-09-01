@@ -67,11 +67,14 @@ module tb_Median_Filter_Core;
     task read_reg(input [R_ADDR_BITS-1:0] addr, output [31:0] data);
         begin
             @(posedge CLK);
-            r_addr_valid_i <= 1'b1;
-            r_addr_i       <= addr;
+            #1;
+            r_addr_valid_i = 1'b1;
+            r_addr_i       = addr;
             @(posedge CLK);
-            r_addr_valid_i <= 1'b0;
+            #1;
+            r_addr_valid_i = 1'b0;
             @(posedge CLK);
+            #1;
             data = r_data_o;
         end
     endtask
