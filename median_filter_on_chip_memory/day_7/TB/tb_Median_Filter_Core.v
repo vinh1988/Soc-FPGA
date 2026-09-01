@@ -80,6 +80,11 @@ module tb_Median_Filter_Core;
     localparam MEDIAN_R_ADDR = 1'b0;
     localparam READY_R_ADDR  = 1'b1;
 
+    reg [7:0] win [0:8];
+    reg [31:0] actual_median, expected_median;
+    reg [31:0] read_status;
+    integer idx;
+
     initial begin
         mismatch_count = 0;
         total_tests    = 0;
@@ -105,11 +110,6 @@ module tb_Median_Filter_Core;
         // Run verification across internal image pixels (avoiding 1-pixel border for 3x3 window)
         for (r = 1; r < 10; r = r + 1) begin
             for (c = 1; c < 10; c = c + 1) begin
-                reg [7:0] win [0:8];
-                reg [31:0] actual_median, expected_median;
-                reg [31:0] read_status;
-                integer idx;
-
                 // Extract 3x3 pixel window centered at (r, c)
                 idx = 0;
                 for (kr = -1; kr <= 1; kr = kr + 1) begin
