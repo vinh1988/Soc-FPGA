@@ -52,13 +52,15 @@ module tb_Median_Filter_Core;
     task write_reg(input [W_ADDR_BITS-1:0] addr, input [31:0] data);
         begin
             @(posedge CLK);
-            w_addr_valid_i <= 1'b1;
-            w_addr_i       <= addr;
-            w_data_i       <= data;
+            #1;
+            w_addr_valid_i = 1'b1;
+            w_addr_i       = addr;
+            w_data_i       = data;
             @(posedge CLK);
-            w_addr_valid_i <= 1'b0;
-            w_addr_i       <= 'b0;
-            w_data_i       <= 'b0;
+            #1;
+            w_addr_valid_i = 1'b0;
+            w_addr_i       = 'b0;
+            w_data_i       = 'b0;
         end
     endtask
 
@@ -86,14 +88,20 @@ module tb_Median_Filter_Core;
     integer idx;
 
     initial begin
-        mismatch_count = 0;
-        total_tests    = 0;
-        w_addr_valid_i = 1'b0;
-        w_data_i       = 32'b0;
-        w_addr_i       = 'b0;
-        r_addr_valid_i = 1'b0;
-        r_addr_i       = 'b0;
-        RST            = 1'b0;
+        mismatch_count  = 0;
+        total_tests     = 0;
+        w_addr_valid_i  = 1'b0;
+        w_data_i        = 32'b0;
+        w_addr_i        = 'b0;
+        r_addr_valid_i  = 1'b0;
+        r_addr_i        = 'b0;
+        RST             = 1'b0;
+        actual_median   = 32'b0;
+        expected_median = 32'b0;
+        read_status     = 32'b0;
+        for (idx = 0; idx < 9; idx = idx + 1) begin
+            win[idx] = 8'h00;
+        end
 
         $display("=================================================");
         $display("   3x3 Median Filter Hardware IP Verification TB ");

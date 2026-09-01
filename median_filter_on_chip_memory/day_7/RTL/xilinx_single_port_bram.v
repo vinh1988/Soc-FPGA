@@ -18,6 +18,14 @@ module xilinx_single_port_bram #(
 
     (* ram_style = "block" *) reg [DATA_WIDTH-1:0] ram [0:RAM_DEPTH-1];
 
+    integer k;
+    initial begin
+        for (k = 0; k < RAM_DEPTH; k = k + 1) begin
+            ram[k] = {DATA_WIDTH{1'b0}};
+        end
+        dout = {DATA_WIDTH{1'b0}};
+    end
+
     always @(posedge clk) begin
         if (we) begin
             ram[addr] <= din;
